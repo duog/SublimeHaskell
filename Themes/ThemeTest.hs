@@ -38,11 +38,11 @@ data LinedData a b =
 		Ord, Read, Show)
 
 data Record a = Record {
-	record :: a,
+	record, record_ :: a,
 	-- comment
 	recordName :: String } deriving (Eq, Show)
 
-data RecordOneLine a = RecordOneLine { recOne :: String, recTwo :: Int, (****) :: Int → Int → Int }
+data RecordOneLine a = RecordOneLine { recOne, recTwo :: String, (****) :: Int → Int → Int }
 
 data GData a b where
 	GLeft :: a -> GData a b
@@ -80,28 +80,37 @@ fun4 :: (Show a) ⇒
 	String
 fun4 = fun3 where
 	(.++.) :: Int -> Int -> Int
-	x .++. y = x + y
+	(.++.) x y = x + y
 	infixr 5 .++.
 
 data SumDat a b = SumDat a b
 
 plus :: a -> b -> SumDat a b
-plus x y = SumDat x y
+x `plus` y = SumDat x y
 
 plus' ∷ a → b → SumDat a b
 plus' = SumDat
 
 minus :: Maybe Int → Maybe Int → Maybe Int
-minus (Just n) (Just m)
+minus f@(Just n) (Just m)
 	| n ≤ m = Just $ m - n
 	| otherwise = Just $ n - m
-minus _ _ = Nothing
+Just n `minus` Nothing = Just n
+Nothing `minus` Just m
+	| m ≤ 0 = Just m
+	| m ≡ 0 = Nothing
+	| otherwise = Just (negate m)
 
 doTest :: Int → IO ()
 doTest 0 = return ()
 doTest n = do
 	print n
 	doTest (n - 1)
+
+z1, z2, z3 :: Int
+z1 = 10
+z2 = 10
+Just z3 = Just 10
 
 -- keyword.operator.infix-call.haskell, entity.name.function.haskell
 (.+.) :: a → b → SumDat a b
